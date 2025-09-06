@@ -1,0 +1,39 @@
+{
+  "name": "capta",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --watch src --ext ts,json --exec ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielagarom2-web/API-FechasHabiles.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/danielagarom2-web/API-FechasHabiles/issues"
+  },
+  "homepage": "https://github.com/danielagarom2-web/API-FechasHabiles#readme",
+  "dependencies": {
+    "express": "^5.1.0",
+    "luxon": "^3.7.2",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/express": "5.0.3",
+    "@types/jest": "^30.0.0",
+    "@types/luxon": "^3.7.1",
+    "@types/node-fetch": "^2.6.13",
+    "jest": "^30.2.0",
+    "nodemon": "^3.1.10",
+    "ts-jest": "^29.4.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.1.6"
+  }
+}
