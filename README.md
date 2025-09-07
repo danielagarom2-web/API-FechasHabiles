@@ -127,7 +127,7 @@ http://localhost:3000/business-days?date=2025-10-06T11:30:00&hours=3
 http://localhost:3000/business-days?date=2025-04-10T15:00:00.000Z&days=5&hours=4
 ```
 
--Resultado esperado: 21 de abril a las 3:00 p.m. (hora Colombia) → "2025-04-21T20:00:00.000Z" (UTC)
+-  Resultado esperado: 21 de abril a las 3:00 p.m. (hora Colombia) → "2025-04-21T20:00:00.000Z" (UTC)
 
 
 

@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
-    "target": "es6",                  
-    "module": "commonjs",             
-    "rootDir": "./src",               
-    "outDir": "./dist",               
-    "strict": true,                   
-    "esModuleInterop": true,          
+    "target": "es6",
+    "module": "commonjs",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "strict": true,
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "noUnusedLocals": true,
@@ -14,5 +14,6 @@
     "sourceMap": true,
     "declaration": true
   },
-  "include": ["src/**/*", "tests"]
+  "include": ["src/**/*"],
+  "exclude": ["tests", "node_modules"]
 }
