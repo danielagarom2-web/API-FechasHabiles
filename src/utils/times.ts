@@ -4,7 +4,8 @@ import { ColombiaDateTime } from "../types/types";
 import { getHolidays } from "./holidays";
 
 /**
- * Suma días hábiles, saltando fines de semana y festivos
+ * Suma días hábiles, respetando fines de semana y festivos.
+ * Ajusta la hora solo si la fecha inicial estaba fuera de jornada.
  */
 export async function addBusinessDays(
   dt: ColombiaDateTime,
@@ -15,8 +16,8 @@ export async function addBusinessDays(
 
   while (days > 0) {
     current = current.plus({ days: 1 });
-    const weekday = current.weekday; // 1=lunes ... 7=domingo
-    const isoDate = current.toISODate();
+    const weekday = current.weekday; 
+    const isoDate = current.setZone(COLOMBIA_TZ).toISODate();
 
     if (!isoDate) continue;
 
@@ -25,75 +26,69 @@ export async function addBusinessDays(
     }
   }
 
-  return current;
+  let hour = current.hour;
+  if (hour >= WORKING_HOURS.lunchStart && hour < WORKING_HOURS.lunchEnd) {
+    hour = WORKING_HOURS.lunchStart; 
+  } else if (hour >= WORKING_HOURS.end) {
+    hour = WORKING_HOURS.end; 
+  }
+  current = current.set({ hour, minute: 0, second: 0 });
+
+  return current.setZone(COLOMBIA_TZ);
 }
 
 /**
- * Suma horas hábiles, respetando horario laboral, almuerzo, fines de semana y festivos
+ * Suma horas hábiles respetando jornada, almuerzo, fines de semana y festivos
  */
-// Sumar horas hábiles, respetando horario laboral, almuerzo y días hábiles
 export async function addWorkingHours(
   dt: ColombiaDateTime,
   hours: number
 ): Promise<ColombiaDateTime> {
-  const holidays = await getHolidays();
-  let current = dt;
+  const holidaysArr = await getHolidays();
+  const holidays = new Set(
+    holidaysArr.map(d => DateTime.fromISO(d).setZone(COLOMBIA_TZ).toISODate())
+  );
+
+  let current = dt.setZone(COLOMBIA_TZ);
 
   while (hours > 0) {
     const weekday = current.weekday;
     const isoDate = current.toISODate();
 
-    // Saltar días no hábiles
-    if (!isoDate || weekday > 5 || holidays.includes(isoDate)) {
+    if (!isoDate || weekday > 5 || holidays.has(isoDate)) {
       current = current.plus({ days: 1 }).set({ hour: WORKING_HOURS.start, minute: 0, second: 0 });
       continue;
     }
 
-    let hour = current.hour;
-
-    // Antes de iniciar jornada
-    if (hour < WORKING_HOURS.start) {
-      current = current.set({ hour: WORKING_HOURS.start, minute: 0 });
-      hour = WORKING_HOURS.start;
+    if (current.hour < WORKING_HOURS.start) {
+      current = current.set({ hour: WORKING_HOURS.start, minute: 0, second: 0 });
     }
 
-    // Después de jornada → saltar al siguiente día hábil
-    if (hour >= WORKING_HOURS.end) {
-      current = current.plus({ days: 1 }).set({ hour: WORKING_HOURS.start, minute: 0 });
-      continue;
-    }
+    const blockStart = current.hour + current.minute / 60;
+    let blockEnd = current.hour < WORKING_HOURS.lunchStart ? WORKING_HOURS.lunchStart : WORKING_HOURS.end;
+    const available = blockEnd - blockStart;
 
-    // Almuerzo: si estamos justo antes de almuerzo y sumar horas llegaría al almuerzo
-    if (hour < WORKING_HOURS.lunchStart && hour + hours > WORKING_HOURS.lunchStart) {
-      const delta = WORKING_HOURS.lunchStart - hour;
-      current = current.plus({ hours: delta });
-      hours -= delta;
-      current = current.set({ hour: WORKING_HOURS.lunchEnd, minute: 0 }); // saltamos almuerzo
-      continue;
-    }
-
-    // Cuántas horas puedo sumar hoy hasta fin de jornada o almuerzo
-    const endHour = hour < WORKING_HOURS.lunchStart ? WORKING_HOURS.lunchStart : WORKING_HOURS.end;
-    const available = endHour - hour;
-    const increment = Math.min(available, hours);
-
-    current = current.plus({ hours: increment });
-    hours -= increment;
-
-    // Si llegamos a almuerzo o fin de jornada → ajustar
-    if (current.hour === WORKING_HOURS.lunchStart) {
-      current = current.set({ hour: WORKING_HOURS.lunchEnd, minute: 0 });
-    }
-    if (current.hour >= WORKING_HOURS.end) {
-      current = current.plus({ days: 1 }).set({ hour: WORKING_HOURS.start, minute: 0 });
+    if (hours <= available) {
+      const newHour = Math.floor(blockStart + hours);
+      const newMinute = Math.round((blockStart + hours - newHour) * 60);
+      current = current.set({ hour: newHour, minute: newMinute, second: 0 });
+      break;
+    } else {
+      hours -= available;
+      current = current.set({ hour: blockEnd, minute: 0, second: 0 });
+      if (blockEnd === WORKING_HOURS.lunchStart) {
+        current = current.set({ hour: WORKING_HOURS.lunchEnd, minute: 0, second: 0 });
+      } else if (blockEnd === WORKING_HOURS.end) {
+        current = current.plus({ days: 1 }).set({ hour: WORKING_HOURS.start, minute: 0, second: 0 });
+      }
     }
   }
 
-  return current;
+  return current.setZone(COLOMBIA_TZ);
 }
 
 /**
- * Función principal para calcular fecha futura
+ * Calcula fecha futura con días y horas hábiles
  */
 export async function calculateFutureDate(
   days?: number,
@@ -103,7 +98,7 @@ export async function calculateFutureDate(
   let dt: ColombiaDateTime;
 
   if (date) {
-    dt = DateTime.fromISO(date, { zone: COLOMBIA_TZ });
+    dt = DateTime.fromISO(date).setZone(COLOMBIA_TZ);
   } else {
     dt = DateTime.now().setZone(COLOMBIA_TZ);
   }
@@ -116,8 +111,14 @@ export async function calculateFutureDate(
     dt = await addWorkingHours(dt, hours);
   }
 
-  return dt;
+  return dt.setZone(COLOMBIA_TZ);
 }
+
+
+
+
+
+
 
 
 
