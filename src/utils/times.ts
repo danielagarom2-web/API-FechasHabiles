@@ -113,14 +113,3 @@ export async function calculateFutureDate(
 
   return dt.setZone(COLOMBIA_TZ);
 }
-
-
-
-
-
-
-
-
-
-
-

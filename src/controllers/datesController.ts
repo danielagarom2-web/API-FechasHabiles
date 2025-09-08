@@ -14,7 +14,14 @@ export class DatesController {
       const hoursParam = req.query.hours;
       const dateParam = req.query.date as string | undefined;
 
-      // Validar parámetros
+      // Validación de parámetros obligatorios
+      if (!daysParam && !hoursParam) {
+        return res.status(400).json({
+          error: "InvalidParameters",
+          message: "Se debe proporcionar al menos 'days' o 'hours'",
+        });
+      }
+
       const days = daysParam ? parseInt(daysParam as string, 10) : 0;
       const hours = hoursParam ? parseInt(hoursParam as string, 10) : 0;
 
