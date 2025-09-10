@@ -88,28 +88,28 @@ http://localhost:3000/business-days?date=2025-10-07T15:00:00&days=1&hours=4
 4. Petición con "days=1" desde un domingo a las 6:00 p.m.
 
 ```bash
-http://localhost:3000/business-days?date=2025-10-05T18:00:00&days=1
+http://localhost:3000/business-days?date=2025-10-05T18:00:00Z&days=1
 ```
 - Resultado esperado: lunes a las 5:00 p.m. (hora Colombia) → "2025-XX-XXT22:00:00Z" (UTC)
 
 5. Petición con "hours=8"  desde un día laboral a las 8:00 a.m.
 
 ```bash
-http://localhost:3000/business-days?date=2025-10-06T08:00:00&hours=8
+http://localhost:3000/business-days?date=2025-10-06T08:00:00Z&hours=8
 ```
 Resultado esperado: mismo día a las 5:00 p.m. (hora Colombia) → "2025-XX-XXT22:00:00Z" (UTC)
 
 6. Petición con "days=1"  desde un día laboral a las 8:00 a.m.
 
 ```bash
-http://localhost:3000/business-days?date=2025-10-06T08:00:00&days=1
+http://localhost:3000/business-days?date=2025-10-06T13:00:00Z&days=1
 ```
 - Resultado esperado: siguiente día laboral a las 8:00 a.m. (hora Colombia) → "2025-XX-XXT13:00:00Z" (UTC)
 
 7. Petición con "days=1"  desde un día laboral a las 12:30 p.m.
 
 ```bash
-http://localhost:3000/business-days?date=2025-10-06T12:30:00&days=1
+http://localhost:3000/business-days?days=1&date=2025-10-09T17:30:00Z
 ```
 
 - Resultado esperado: siguiente día laboral a las 12:00 p.m. (hora Colombia) → "2025-XX-XXT17:00:00Z" (UTC)
@@ -117,7 +117,7 @@ http://localhost:3000/business-days?date=2025-10-06T12:30:00&days=1
 8. Petición con "hours=3"  desde un día laboral a las 11:30 a.m.
 
 ```bash
-http://localhost:3000/business-days?date=2025-10-06T11:30:00&hours=3
+http://localhost:3000/business-days?hours=3&date=2025-10-09T16:30:00Z
 ```
 - Resultado esperado: mismo día laboral a las 3:30 p.m. (hora Colombia) → 2025-XX-XXT20:30:00Z (UTC)
 
@@ -131,7 +131,11 @@ http://localhost:3000/business-days?date=2025-04-10T15:00:00.000Z&days=5&hours=4
 
 
 
-**URL de despliegue:** https://api-fechashabiles.onrender.com/
+**URL de despliegue:** 
+https://api-fechashabiles.onrender.com/curl 
+
+"https://api-fechashabiles.onrender.com?date=2025-04-10T15:00:00.000Z&days=5&hours=4"
+
 
 
 
