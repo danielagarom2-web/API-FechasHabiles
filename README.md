@@ -16,7 +16,7 @@ Este proyecto implementa una API REST desarrollada en TypeScript con Express que
 
 - Endpoint público /business-days
 
-- Preparado para despliegue en Vercel.
+- Preparado para despliegue en Render.
 
 
 
@@ -132,9 +132,13 @@ http://localhost:3000/business-days?date=2025-04-10T15:00:00.000Z&days=5&hours=4
 
 
 **URL de despliegue:** 
-https://api-fechashabiles.onrender.com/curl 
-
-"https://api-fechashabiles.onrender.com?date=2025-04-10T15:00:00.000Z&days=5&hours=4"
+```bash
+https://api-fechashabiles.onrender.com
+```
+**Ejemplo de uso:**
+```bash
+https://api-fechashabiles.onrender.com?date=2025-10-09T15:00:00.000Z&days=5&hours=4
+```
 
 
 
